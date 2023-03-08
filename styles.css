@@ -1,0 +1,93 @@
+.parent {
+    background: mediumpurple;
+    padding: 1rem
+}
+.child {
+    border: 1px solid indigo;
+    padding: 1rem
+}
+.flex-parent {
+    display: flex;
+}
+
+.flex-child-left {
+    flex: 1;
+}
+.flex-child-right {
+    flex: 5;
+}
+
+.color-buttons {
+    width: 30px;
+    height: 30px;
+}
+
+#black {
+    background: black;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#gray {
+    background: gray;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#red {
+    background: red;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#orange {
+    background: orange;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#yellow {
+    background: yellow;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#green {
+    background: green;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#blue {
+    background: blue;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#purple {
+    background: purple;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#pink {
+    background: pink;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#brown {
+    background: brown;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#rainbow {
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.the-canvas {
+    background: white;
+}
