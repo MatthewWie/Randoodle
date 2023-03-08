@@ -1,34 +1,66 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <title>Canvas demo</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
+    <title>Randoodle</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: darkslateblue
+        }
 
+        canvas {
+            background-color: white;
+        }
+    </style>
+</head>
 <body>
-    <div class="parent flex-parent">
-        <div class="child flex-child-left">
-            <div id="color-options">
-                <div class="color-buttons" id="black"></div>
-                <div class="color-buttons" id="gray"></div>
-                <div class="color-buttons" id="red"></div>
-                <div class="color-buttons" id="orange"></div>
-                <div class="color-buttons" id="yellow"></div>
-                <div class="color-buttons" id="green"></div>
-                <div class="color-buttons" id="blue"></div>
-                <div class="color-buttons" id="purple"></div>
-                <div class="color-buttons" id="pink"></div>
-                <div class="color-buttons" id="brown"></div>
-                <div class="color-buttons" id="rainbow"></div>
-            </div>
-            <script src="main.js"></script>
-            <input type="range" min="1" max="50" value="25" class="slider" id="brushSize">
-        </div>
-        <div class="child flex-child-right">
-            <canvas class="the-canvas" id="canvas" width="600" height="590" style="border: 1px solid black;"></canvas>
+    <script src="main.js"></script>
+    <div class="container">
+        <canvas class="the-canvas" id="canvas"></canvas>
+        <div class="palette">
+            <div class="color-buttons" style="background-color: #000000;" id="black"></div>
+            <div class="color-buttons" style="background-color: #505050;" id="gray"></div>
+            <div class="color-buttons" style="background-color: #ef130b;" id="red"></div>
+            <div class="color-buttons" style="background-color: #ff7100;" id="orange"></div>
+            <div class="color-buttons" style="background-color: #ffe400;" id="yellow"></div>
+            <div class="color-buttons" style="background-color: #00cc00;" id="green"></div>
+            <div class="color-buttons" style="background-color: #00b2ff;" id="blue"></div>
+            <div class="color-buttons" style="background-color: #a300ba;" id="purple"></div>
+            <div class="color-buttons" style="background-color: #df69a7;" id="pink"></div>
+            <div class="color-buttons" style="background-color: #a0522d;" id="brown"></div>
         </div>
     </div>
-</body>
+    <script>
+        var canvas = document.getElementById('canvas');
+        canvas.width = window.innerWidth - 20;
+        canvas.height = window.innerHeight - 120;
+    </script>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
+        .palette {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .color-buttons {
+            width: 80px;
+            height: 80px;
+            margin-right: 0px;
+            cursor: pointer;
+        }
+    </style>
+</body>
 </html>
