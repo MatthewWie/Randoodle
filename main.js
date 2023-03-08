@@ -1,40 +1,43 @@
 document.addEventListener("DOMContentLoaded", () => {
     const colors = {
         black: "#000000",
-        gray: "#808080",
-        red: "#ff0000",
-        orange: "#ffa500",
-        yellow: "#ffff00",
-        green: "#008000",
-        blue: "#0000ff",
-        purple: "#800080",
-        pink: "#ffc0cb",
-        brown: "#a52a2a",
+        gray: "#505050",
+        red: "#ef130b",
+        orange: "#ff7100",
+        yellow: "#ffe400",
+        green: "#00cc00",
+        blue: "#00b2ff",
+        purple: "#a300ba",
+        pink: "#df69a7",
+        brown: "#a0522d",
+
         rainbow: "rainbow"
     };
 
     class DrawingApp {
-        constructor(canvas, brushSizeSlider, colorButtons) {
+        constructor(canvas, colorButtons) {
             this.canvas = canvas;
             this.ctx = canvas.getContext("2d");
-            this.brushSizeSlider = brushSizeSlider;
-            this.colorButtons = colorButtons;
             this.isDrawing = false;
+            this.colorButtons = colorButtons;
             this.lastX = 0;
             this.lastY = 0;
             this.hue = 0;
+            this.brushSize = 10;
             this.direction = true;
             this.color = colors.black;
+
+            this.dashInterval = null;
+            this.startDashes();
 
             this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
             this.canvas.addEventListener("mousemove", this.draw.bind(this));
             this.canvas.addEventListener("mouseup", this.stopDrawing.bind(this));
             this.canvas.addEventListener("mouseout", this.stopDrawing.bind(this));
+            this.canvas.addEventListener("mousedown", this.draw.bind(this));
 
             this.canvas.addEventListener("wheel", this.handleScroll.bind(this));
             document.addEventListener("keydown", this.handleKeyDown.bind(this));
-
-            this.createSlider();
 
             for (const [color, button] of Object.entries(this.colorButtons)) {
                 button.addEventListener("click", () => {
@@ -42,37 +45,22 @@ document.addEventListener("DOMContentLoaded", () => {
                     this.color = colors[color];
                 });
             }
-            this.updateDisplaceBrush = 0;
+
             this.update();
             this.dashes();
         }
 
-        createSlider() {
-            const slider = document.getElementById("brushSize");
-            slider.oninput = () => {
-                this.brushSize = slider.value;
-            };
-
-            slider.addEventListener("wheel", (e) => {
-                e.preventDefault();
-                const delta = Math.sign(e.deltaY);
-                const increment = delta * (e.shiftKey ? 10 : 1);
-                slider.value = parseInt(slider.value) + increment;
-                this.brushSize = slider.value;
-            });
-        }
+        // ##############################
+        //           HANDLING
+        // ##############################
 
         handleScroll(e) {
-            // Increase or decrease the slider value based on the direction of the scroll
-            this.brushSizeSlider.value = parseInt(this.brushSizeSlider.value) + (e.deltaY > 0 ? -1 : 1);
-            // Set the brush size based on the new slider value
-            this.brushSize = this.brushSizeSlider.value;
-        }
-
-        setColor(color) {
-            this.color = colors[color];
-            if (this.color === colors.rainbow) {
-                this.hue = 0;
+            // Increase or decrease the size value based on the direction of the mouse scroll
+            this.brushSize = parseInt(this.brushSize) + ((e.deltaY > 0 ? -1 : 1) * 10);
+            if (this.brushSize < 5) {
+                this.brushSize = 5;
+            } else if (this.brushSize > 75) {
+                this.brushSize = 75;
             }
         }
 
@@ -111,32 +99,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 case "r":
                     this.setColor("rainbow");
                 case " ":
-                    this.clearCanvas();
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                     break;
                 default:
                     break;
             }
         }
 
+        // ##############################
+        //            DRAWING
+        // ##############################
+
+        setColor(color) {
+            this.color = colors[color];
+            if (this.color === colors.rainbow) {
+                this.hue = 0;
+            }
+        }
+
         startDrawing(e) {
             const canvasRect = this.canvas.getBoundingClientRect();
-
             const mouseX = e.clientX - canvasRect.left;
             const mouseY = e.clientY - canvasRect.top;
 
             this.isDrawing = true;
             [this.lastX, this.lastY] = [mouseX, mouseY];
-
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.lastX, this.lastY);
-            this.ctx.lineTo(mouseX, mouseY);
-            this.ctx.stroke();
         }
 
         draw(e) {
             if (!this.isDrawing) {
                 return;
             }
+
+            this.ctx.lineWidth = this.brushSize;
 
             if (this.color === colors.rainbow) {
                 this.ctx.strokeStyle = `hsl(${this.hue}, 100%, 50%)`;
@@ -155,28 +150,29 @@ document.addEventListener("DOMContentLoaded", () => {
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
 
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.lastX, this.lastY);
-            this.ctx.lineTo(mouseX, mouseY);
-            this.ctx.stroke();
-
-            [this.lastX, this.lastY] = [mouseX, mouseY];
-
-            if (this.ctx.lineWidth >= 50 || this.ctx.lineWidth <= 1) {
-                this.direction = !this.direction;
-            }
-
-            if (this.direction) {
-                this.ctx.lineWidth++;
+            if (mouseX === this.lastX && mouseY === this.lastY) {
+                // Mouse is not moving
+                this.isMoving = false;
+                drawDot();
             } else {
-                this.ctx.lineWidth--;
+                // Mouse is moving
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.lastX, this.lastY);
+                this.ctx.lineTo(mouseX, mouseY);
+                this.ctx.stroke();
             }
+            [this.lastX, this.lastY] = [mouseX, mouseY];
         }
 
+        stopDrawing() {
+            this.isDrawing = false;
+        }
+
+        // ##############################
+        //       LOOPING FUNCTIONS
+        // ##############################
 
         update() {
-            // Update the brushstroke size
-            this.ctx.lineWidth = this.brushSizeSlider.value / 2;
 
             // Copy the current canvas to a temporary canvas
             const tempCanvas = document.createElement("canvas");
@@ -192,44 +188,61 @@ document.addEventListener("DOMContentLoaded", () => {
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             // Restore the saved canvas state, but slightly displaced
-            this.ctx.putImageData(imgData, 0, -1);
+            this.ctx.putImageData(imgData, 1, 0);
 
             // Call the update method again after a short delay
             window.requestAnimationFrame(this.update.bind(this));
         }
 
+        startDashes() {
+            this.dashInterval = setInterval(() => {
+                this.dashes();
+            }, 500); // set the delay here, in milliseconds
+        }
+
         dashes() {
-            // Set the line style for the vertical dotted lines
-            this.ctx.setLineDash([2, 2]);
+            // Calculate the number of dots required based on the canvas width
+            const numDots = Math.ceil(this.canvas.width / 50);
+            const dotSize = 5;
+
+            // Save the current state of the context
+            this.ctx.save();
+
+            // Set the stroke style and dot size
             this.ctx.strokeStyle = colors.gray;
+            this.ctx.fillStyle = colors.gray;
+            this.ctx.lineWidth = 2;
+            this.ctx.lineCap = "round";
 
-            // Draw the left vertical line
-            this.ctx.beginPath();
-            this.ctx.moveTo(5, (this.canvas.height - 5));
-            this.ctx.lineTo(5, this.canvas.height);
-            this.ctx.stroke();
+            // Loop through the required number of dots and draw them
+            for (let i = 0; i < numDots; i++) {
+                // Skip drawing the dot if i is not 0 or (numDots - 1)
+                // Yes, I understand that this is an incredibly stupid way to do it, but I'm crunching right now okay
+                if (i !== 0 && i !== numDots - 1) {
+                    continue;
+                }
 
-            // Draw the right vertical line
-            this.ctx.beginPath();
-            this.ctx.moveTo(this.canvas.width - 5, (this.canvas.height - 5));
-            this.ctx.lineTo(this.canvas.width - 5, this.canvas.height);
-            this.ctx.stroke();
+                // Calculate the x-coordinate of the dot based on the loop index
+                const x = (i * 50) + 25;
 
-            // Call the dashes method again after a short delay
-            setTimeout(dashes, 1000)
-        }
+                // Calculate the y-coordinate of the dot based on the canvas height
+                const y = this.canvas.height - (dotSize / 2);
 
-        stopDrawing() {
-            this.isDrawing = false;
-        }
+                // Draw the dot
+                this.ctx.beginPath();
+                this.ctx.arc(x, y, dotSize / 2, 0, 2 * Math.PI);
+                this.ctx.fill();
+                this.ctx.stroke();
+            }
 
-        clearCanvas() {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            // Restore the saved context state
+            this.ctx.restore();
+
+            setInterval(dashes(), 10)
         }
     }
 
     const canvas = document.getElementById("canvas");
-    const brushSizeSlider = document.getElementById("brushSize");
     const colorButton = {
         black: document.getElementById("black"),
         gray: document.getElementById("gray"),
@@ -240,9 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
         blue: document.getElementById("blue"),
         purple: document.getElementById("purple"),
         pink: document.getElementById("pink"),
-        brown: document.getElementById("brown"),
-        rainbow: document.getElementById("rainbow")
+        brown: document.getElementById("brown")
     };
 
-    new DrawingApp(canvas, brushSizeSlider, colorButton);
+    new DrawingApp(canvas, colorButton);
 });
