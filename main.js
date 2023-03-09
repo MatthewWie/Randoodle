@@ -222,7 +222,12 @@ document.addEventListener("DOMContentLoaded", () => {
         var text = document.getElementById("text");
         var swap = document.getElementById("swap");
         if (limit >= 3) {
-            swap.style.visibility = "visible";
+            if (limit >= 50) {
+                limit = 0;
+                swap.style.visibility = "visible";
+            } else {
+                swap.style.visibility = "visible";
+            }
         } else {
             text.style.visibility = "visible";
             limit = limit + 1;
