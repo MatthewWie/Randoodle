@@ -48,6 +48,7 @@
     <div class="container">
         <div id="text">SWITCH</div>
         <div id="swap">SWAP</div>
+        <div id="first">START</div>
         <canvas class="the-canvas" id="canvas"></canvas>
         <div class="palette">
             <div class="color-buttons" style="background-color: #000000;" id="black"></div>
@@ -109,6 +110,18 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: blue;
+            font-size: 50px;
+            font-family: Impact;
+            visibility: hidden;
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+        #first {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: greenyellow;
             font-size: 50px;
             font-family: Impact;
             visibility: hidden;
