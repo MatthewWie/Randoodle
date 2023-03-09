@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
         purple: "#a300ba",
         pink: "#df69a7",
         brown: "#a0522d",
+        white: "#ffffff",
 
         rainbow: "rainbow"
     };
@@ -26,9 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
             this.brushSize = 10;
             this.direction = true;
             this.color = colors.black;
-
-            this.dashInterval = null;
-            this.startDashes();
 
             this.canvas.addEventListener("mousedown", this.startDrawing.bind(this));
             this.canvas.addEventListener("mousemove", this.draw.bind(this));
@@ -47,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             this.update();
-            this.dashes();
         }
 
         // ##############################
@@ -95,6 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     break;
                 case "0":
                     this.setColor("brown");
+                    break;
+                case "-":
+                    this.setColor("white");
                     break;
                 case "r":
                     this.setColor("rainbow");
@@ -193,53 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // Call the update method again after a short delay
             window.requestAnimationFrame(this.update.bind(this));
         }
-
-        startDashes() {
-            this.dashInterval = setInterval(() => {
-                this.dashes();
-            }, 500); // set the delay here, in milliseconds
-        }
-
-        dashes() {
-            // Calculate the number of dots required based on the canvas width
-            const numDots = Math.ceil(this.canvas.width / 50);
-            const dotSize = 5;
-
-            // Save the current state of the context
-            this.ctx.save();
-
-            // Set the stroke style and dot size
-            this.ctx.strokeStyle = colors.gray;
-            this.ctx.fillStyle = colors.gray;
-            this.ctx.lineWidth = 2;
-            this.ctx.lineCap = "round";
-
-            // Loop through the required number of dots and draw them
-            for (let i = 0; i < numDots; i++) {
-                // Skip drawing the dot if i is not 0 or (numDots - 1)
-                // Yes, I understand that this is an incredibly stupid way to do it, but I'm crunching right now okay
-                if (i !== 0 && i !== numDots - 1) {
-                    continue;
-                }
-
-                // Calculate the x-coordinate of the dot based on the loop index
-                const x = (i * 50) + 25;
-
-                // Calculate the y-coordinate of the dot based on the canvas height
-                const y = this.canvas.height - (dotSize / 2);
-
-                // Draw the dot
-                this.ctx.beginPath();
-                this.ctx.arc(x, y, dotSize / 2, 0, 2 * Math.PI);
-                this.ctx.fill();
-                this.ctx.stroke();
-            }
-
-            // Restore the saved context state
-            this.ctx.restore();
-
-            setInterval(dashes(), 10)
-        }
     }
 
     const canvas = document.getElementById("canvas");
@@ -253,8 +206,43 @@ document.addEventListener("DOMContentLoaded", () => {
         blue: document.getElementById("blue"),
         purple: document.getElementById("purple"),
         pink: document.getElementById("pink"),
-        brown: document.getElementById("brown")
+        brown: document.getElementById("brown"),
+        white: document.getElementById("white")
     };
 
     new DrawingApp(canvas, colorButton);
+
+    function getRandomTime() {
+        return Math.floor(Math.random() * 3000) + 1000; // returns a random time between 1 and 4 seconds (in milliseconds)
+    }
+
+    var limit = 99;
+
+    setTimeout(function () {
+        var text = document.getElementById("text");
+        var swap = document.getElementById("swap");
+        if (limit >= 3) {
+            swap.style.visibility = "visible";
+        } else {
+            text.style.visibility = "visible";
+            limit = limit + 1;
+        }
+        setTimeout(function () {
+            text.style.visibility = "hidden";
+            swap.style.visibility = "hidden";
+        }, 1000); // hides after 1 second
+    }, 5000); // waits for 5 seconds at the very least
+
+    setInterval(function () {
+        var text = document.getElementById("text");
+        text.style.visibility = "hidden";
+        setTimeout(function () {
+        }, 1000); // disables the transition after 1 second
+        setTimeout(function () {
+            text.style.visibility = "visible";
+            setTimeout(function () {
+                text.style.visibility = "hidden";
+            }, 1000); // hides after 1 second
+        }, getRandomTime()); // waits for a random time before turning the square white
+    }, 5000 + getRandomTime()); // repeats the process every 5 seconds plus a random time
 });
