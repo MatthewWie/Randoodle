@@ -16,11 +16,36 @@
         canvas {
             background-color: white;
         }
+        /* Styling for the popup */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border: 1px solid #000;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
     <script src="main.js"></script>
+    <div id="popup" class="popup">
+        <p>Directions:</p>
+        <ol>
+            <li>Scroll to change brush size.</li>
+            <li>Press the arrow keys to change your brush color.</li>
+            <li>Press spacebar to clear the canvas.</li>
+            <li>Press "R" for a rainbow brush.</li>
+            <li>When game says switch, draw what's on a new card.</li>
+        </ol>
+        <button onclick="closePopup()">Close</button>
+    </div>
     <div class="container">
+        <div id="text">SWITCH</div>
+        <div id="swap">SWAP</div>
         <canvas class="the-canvas" id="canvas"></canvas>
         <div class="palette">
             <div class="color-buttons" style="background-color: #000000;" id="black"></div>
@@ -33,6 +58,7 @@
             <div class="color-buttons" style="background-color: #a300ba;" id="purple"></div>
             <div class="color-buttons" style="background-color: #df69a7;" id="pink"></div>
             <div class="color-buttons" style="background-color: #a0522d;" id="brown"></div>
+            <div class="color-buttons" style="background-color: #ffffff;" id="white"></div>
         </div>
     </div>
     <script>
@@ -61,6 +87,44 @@
             margin-right: 0px;
             cursor: pointer;
         }
+
+        #text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: red;
+            font-size: 50px;
+            font-family: Impact;
+            visibility: hidden;
+        }
+
+        #swap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: blue;
+            font-size: 50px;
+            font-family: Impact;
+            visibility: hidden;
+        }
     </style>
+    <script>
+        // Function to show the popup when the page is loaded
+        function showPopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "block";
+        }
+
+        // Function to close the popup when the "Close" button is clicked
+        function closePopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "none";
+        }
+
+        // Show the popup when the page is loaded
+        window.onload = showPopup;
+    </script>
 </body>
 </html>
