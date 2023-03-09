@@ -221,10 +221,11 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(function () {
         var text = document.getElementById("text");
         var swap = document.getElementById("swap");
+        var first = document.getElementById("first");
         if (limit >= 3) {
             if (limit >= 50) {
                 limit = 0;
-                swap.style.visibility = "visible";
+                first.style.visibility = "visible";
             } else {
                 swap.style.visibility = "visible";
             }
@@ -235,6 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(function () {
             text.style.visibility = "hidden";
             swap.style.visibility = "hidden";
+            first.style.visibility = "hidden";
         }, 1000); // hides after 1 second
     }, 5000); // waits for 5 seconds at the very least
 
