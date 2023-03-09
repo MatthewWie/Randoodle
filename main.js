@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
     new DrawingApp(canvas, colorButton);
 
     function getRandomTime() {
-        return Math.floor(Math.random() * 3000) + 1000; // returns a random time between 1 and 4 seconds (in milliseconds)
+        return Math.floor(Math.random() * 9000) + 1000; // returns a random time between 1 and 10 seconds (in milliseconds)
     }
 
     var limit = 99;
